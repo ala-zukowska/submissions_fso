@@ -33,10 +33,14 @@ const App = () => {
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
       <p>has {votes[selected]} votes</p>
       <Button onClick={onVote} text="vote"/>
       <Button onClick={() => setSelected(generateRandomInt(0, anecdotes.length-1, selected))} text="next anecdote"/>
+      <h1>Anecdote with the most votes</h1>
+      <p>{anecdotes[votes.indexOf(Math.max(...votes))]}</p>
+      <p>has {votes[votes.indexOf(Math.max(...votes))]} votes</p>
     </div>
   )
 }
