@@ -7,6 +7,13 @@ const Display = ({ text, counter, textAfter = "" }) => <div>{text} {counter}{tex
 const Statistics = ({ good, neutral, bad}) => {
   const total = good + neutral + bad
   const avrSum = good - bad
+
+  if (total === 0) {
+    return <p>
+      No feedback given
+    </p>
+  }
+
   return <div>
       <Display text="good" counter={good}/>
       <Display text="neutral" counter={neutral}/>
