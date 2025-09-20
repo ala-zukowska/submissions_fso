@@ -13,4 +13,10 @@ const create = newContact => {
     .then(response => response.data)
 }
 
-export default { getAll, create }
+const remove = id => {
+    const url = `${baseUrl}/${id}`
+    return axios
+    .delete(url)
+}
+
+export default { getAll, create, remove }
