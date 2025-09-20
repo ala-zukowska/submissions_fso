@@ -3,12 +3,14 @@ import AllNumbersDisplay from './components/AllNumbersDisplay'
 import Filter from './components/Filter'
 import AddPersonForm from './components/AddPersonForm'
 import personService from './services/persons'
+import Notification from './components/notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -18,6 +20,13 @@ const App = () => {
     })
   },[])
 
+  const changeErrorMessage = (message, type) => {
+    setErrorMessage({text: message, type})
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
+  }
+
   const changeNumber = (id, changedNumber) => {
     const contact = persons.find(c => c.id === id)
     const changedPerson = {...contact, number: changedNumber}
@@ -25,10 +34,11 @@ const App = () => {
     personService
     .update(id, changedPerson)
     .then(returnedContact => {
+      changeErrorMessage(`${changedPerson.name}'s phone number was updated`, 'success')
       setPersons(persons.map(person => person.id !== id ? person : returnedContact))
     })
     .catch(() => {
-      window.alert(`The person ${changedPerson.name} was already deleted from the server!`)
+      changeErrorMessage(`Information of ${changedPerson.name} has already been removed from the server!`, 'fail')
       setPersons(persons.filter(person => person.id !== id))
     })
   }
@@ -42,7 +52,7 @@ const App = () => {
     const existingPerson = persons.find(person => person.name === newName)
     if (existingPerson) {
       if (existingPerson.number == newNumber){
-        window.alert(`${newName} is already added to the phonebook with this phone number`)
+        changeErrorMessage(`${newName} is already added to the phonebook with this phone number`, 'fail')
       } else {
         if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
           changeNumber(existingPerson.id, newNumber)
@@ -51,7 +61,10 @@ const App = () => {
     } else {
       personService
       .create(personObject)
-      .then(newContact => setPersons(persons.concat(newContact)))
+      .then(newContact => {
+        setPersons(persons.concat(newContact))
+        changeErrorMessage(`Added ${newContact.name}`, 'success')
+      })
     }
     setNewName('')
     setNewNumber('')
@@ -61,10 +74,12 @@ const App = () => {
     if (window.confirm(`Delete ${name}?`)) {
       personService
       .remove(id)
-      .then(() => 
-        setPersons(persons.filter(person => person.id !== id)))
+      .then(() => {
+        setPersons(persons.filter(person => person.id !== id))
+        changeErrorMessage(`Deleted ${name}`, 'success')
+      })
       .catch(() => {
-        window.alert(`The person ${name} was already deleted from the server!`)
+        changeErrorMessage(`Information of ${name} has already been removed from the server!`, 'fail')
         setPersons(persons.filter(person => person.id !== id))
       })
     }
@@ -87,6 +102,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage?.text} type={errorMessage?.type}/>
       <Filter value={newFilter} onChange={handleFilterChange}/>
       <h2>Add a new number</h2>
       <AddPersonForm onSubmit={addPerson} valueName={newName} valueNumber={newNumber} onChangeName={handleNameChange} onChangeNumber={handleNumberChange}/>
