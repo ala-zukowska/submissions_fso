@@ -18,16 +18,37 @@ const App = () => {
     })
   },[])
 
+  const changeNumber = (id, changedNumber) => {
+    const contact = persons.find(c => c.id === id)
+    const changedPerson = {...contact, number: changedNumber}
+    
+    personService
+    .update(id, changedPerson)
+    .then(returnedContact => {
+      setPersons(persons.map(person => person.id !== id ? person : returnedContact))
+    })
+    .catch(() => {
+      window.alert(`The person ${changedPerson.name} was already deleted from the server!`)
+      setPersons(persons.filter(person => person.id !== id))
+    })
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
-    if (persons.some(person => person.name === newName)) {
-      window.alert(`${newName} is already added to phonebook`)
-    }    
-    else {
-      const personObject = {
+    const personObject = {
         name: newName,
         number: newNumber,
       }
+    const existingPerson = persons.find(person => person.name === newName)
+    if (existingPerson) {
+      if (existingPerson.number == newNumber){
+        window.alert(`${newName} is already added to the phonebook with this phone number`)
+      } else {
+        if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+          changeNumber(existingPerson.id, newNumber)
+        }
+      }
+    } else {
       personService
       .create(personObject)
       .then(newContact => setPersons(persons.concat(newContact)))
@@ -42,7 +63,7 @@ const App = () => {
       .remove(id)
       .then(() => 
         setPersons(persons.filter(person => person.id !== id)))
-      .catch(error => {
+      .catch(() => {
         window.alert(`The person ${name} was already deleted from the server!`)
         setPersons(persons.filter(person => person.id !== id))
       })
