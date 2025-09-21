@@ -17,10 +17,11 @@ const App = () => {
 
   const findCountry = event => {
     setNewCountry(event.target.value)
+    setSelectedCountry(null)
   }
 
   const countriesToDisplay = countries.filter(country => country.name.common?.toLowerCase().includes(newCountry.toLowerCase()))
-
+  
   useEffect(()=>{
     if (countriesToDisplay.length === 1){
       const countryName = countriesToDisplay[0].name.common
@@ -29,18 +30,18 @@ const App = () => {
         .getCountry(countryName)
         .then(country => setSelectedCountry(country))
       }
-    }
+    } 
   },[countriesToDisplay, selectedCountry])
 
   return (
     <div>
       <FilterCountries value={newCountry} onChange={findCountry}/>
-      {countriesToDisplay.length === 1 && selectedCountry ? (
+      {selectedCountry ? (
         <DisplayCountry country={selectedCountry}/>
       ) : null}
 
-      {countriesToDisplay.length > 1 && countriesToDisplay.length <= 10 ? (
-        <DisplayMatchingCountries countries={countriesToDisplay} />
+      {countriesToDisplay.length > 1 && countriesToDisplay.length <= 10 && !selectedCountry ? (
+        <DisplayMatchingCountries countries={countriesToDisplay} showCountry={c => setSelectedCountry(c)}/>
       ) : null}
 
       {countriesToDisplay.length > 10 ? (
