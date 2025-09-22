@@ -1,7 +1,7 @@
 const DisplayLanguages = ({ languages }) => {
   return (
     <>
-      <h1>Languages</h1>
+      <h2>Languages</h2>
       <ul>
         {Object.values(languages).map(value => {
           return <li key={value}>{value}</li>

@@ -8,6 +8,8 @@ const App = () => {
   const [countries, setCountries] = useState([])
   const [newCountry, setNewCountry] = useState('')
   const [selectedCountry, setSelectedCountry] = useState(null)
+  const [weather, setWeather] = useState(null)
+  const api_key = import.meta.env.VITE_SOME_KEY
 
   useEffect(()=>{
     countryService
@@ -18,6 +20,7 @@ const App = () => {
   const findCountry = event => {
     setNewCountry(event.target.value)
     setSelectedCountry(null)
+    setWeather(null)
   }
 
   const countriesToDisplay = countries.filter(country => country.name.common?.toLowerCase().includes(newCountry.toLowerCase()))
@@ -33,15 +36,35 @@ const App = () => {
     } 
   },[countriesToDisplay, selectedCountry])
 
+  useEffect(() => {
+    if (selectedCountry) {
+      countryService
+      .getCoordinates(selectedCountry.capital[0], api_key)
+      .then(latLonData => {
+        const lat = latLonData[0].lat
+        const lon = latLonData[0].lon
+        return countryService.getWeather(lat, lon, api_key)
+      })
+      .then(weatherData => {
+        setWeather(weatherData)
+      })
+    }
+  }, [selectedCountry, api_key]);
+
   return (
     <div>
       <FilterCountries value={newCountry} onChange={findCountry}/>
       {selectedCountry ? (
-        <DisplayCountry country={selectedCountry}/>
+        <DisplayCountry country={selectedCountry} weather={weather}/>
       ) : null}
 
       {countriesToDisplay.length > 1 && countriesToDisplay.length <= 10 && !selectedCountry ? (
-        <DisplayMatchingCountries countries={countriesToDisplay} showCountry={c => setSelectedCountry(c)}/>
+        <DisplayMatchingCountries 
+          countries={countriesToDisplay} 
+          showCountry={country => 
+            countryService.getCountry(country.name.common)
+              .then(c => setSelectedCountry(c))
+          }/>
       ) : null}
 
       {countriesToDisplay.length > 10 ? (
