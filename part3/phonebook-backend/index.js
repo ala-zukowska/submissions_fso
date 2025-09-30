@@ -47,6 +47,18 @@ app.get('/api/persons/:id', (request, response) => {
   } else {
     response.status(404).end()
   }
+})
+
+app.delete('/api/persons/:id', (request, response) => {
+  const id = request.params.id
+  const person = contacts.find(contact => contact.id === id)
+
+  if (person) {
+    contacts.filter(contact => contact.id !== id)
+    response.status(204).end()
+  } else {
+    response.status(404).end()
+  }
   
 })
 
