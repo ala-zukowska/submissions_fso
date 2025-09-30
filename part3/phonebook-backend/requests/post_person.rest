@@ -1,0 +1,32 @@
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Alexander Stubb",
+    "number": "0295-226-000"
+}
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Alexander Stubb"
+}
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "number": "0295-226-000"
+}
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Dan Abramov",
+    "number": "0295-226-000"
+}
