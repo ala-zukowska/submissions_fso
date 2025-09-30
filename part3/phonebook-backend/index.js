@@ -28,6 +28,16 @@ app.get('/api/persons', (request, response) => {
     response.json(contacts)
 })
 
+app.get('/info', (request, response) => {
+  const currentTime = new Date()
+
+  response.send(`
+    <p>Phonebook has info for ${contacts.length} people</p>
+    <p>${currentTime}</p>
+    `)
+
+})
+
 app.get('/api/persons/:id', (request, response) => {
   const id = request.params.id
   const person = contacts.find(contact => contact.id === id)
