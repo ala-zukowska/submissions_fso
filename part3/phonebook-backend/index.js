@@ -13,7 +13,7 @@ const options = {
 const app = express()
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
-app.use(cors())
+app.use(cors(options))
 
 let contacts = [
     { 
@@ -37,6 +37,10 @@ let contacts = [
       "number": "39-23-6423122"
     }
 ]
+
+app.get('/', (req, res) => {
+  res.send('Phonebook backend is running. Try /api/persons or /info');
+});
 
 app.get('/api/persons', (request, response) => {
     response.json(contacts)
@@ -102,7 +106,7 @@ app.post('/api/persons', (request, response) => {
   response.json(person)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
