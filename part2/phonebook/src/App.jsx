@@ -34,13 +34,17 @@ const App = () => {
     personService
     .update(id, changedPerson)
     .then(returnedContact => {
+      if (!returnedContact) {
+        changeErrorMessage(`Information of ${changedPerson.name} has already been removed from the server!`, 'fail')
+        setPersons(persons.filter(person => person.id !== id))
+      }
       changeErrorMessage(`${changedPerson.name}'s phone number was updated`, 'success')
       setPersons(persons.map(person => person.id !== id ? person : returnedContact))
     })
-    .catch(() => {
-      changeErrorMessage(`Information of ${changedPerson.name} has already been removed from the server!`, 'fail')
-      setPersons(persons.filter(person => person.id !== id))
-    })
+    .catch(error => {
+        const message = error.response?.data?.error || 'Failed to add contact'
+        changeErrorMessage(message, 'fail')
+      })
   }
 
   const addPerson = (event) => {
