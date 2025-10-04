@@ -64,10 +64,14 @@ const App = () => {
       .then(newContact => {
         setPersons(persons.concat(newContact))
         changeErrorMessage(`Added ${newContact.name}`, 'success')
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch(error => {
+        const message = error.response?.data?.error || 'Failed to add contact'
+        changeErrorMessage(message, 'fail')
       })
     }
-    setNewName('')
-    setNewNumber('')
   }
 
   const removePerson = (id, name) => {

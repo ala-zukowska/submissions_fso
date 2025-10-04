@@ -60,20 +60,6 @@ app.delete('/api/persons/:id', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
   const {name, number} = request.body
 
-  if (!number) {
-    return response.status(400).json({
-      error: 'number missing'
-    })
-  } else if (!name) {
-    return response.status(400).json({
-      error: 'name missing'
-    })
-  } /* else if (contacts.find(contact => contact.name === body.name)) {
-    return response.status(400).json({
-      error: 'name must be unique'
-    })
-  } */
-
   const person = new Person({
     name: name, 
     number: number
@@ -89,19 +75,17 @@ app.post('/api/persons', (request, response, next) => {
 app.put('/api/persons/:id', (request, response, next) => {
   const {name, number} = request.body
 
-  Person.findById(request.params.id)
-    .then(contact => {
-      if (!contact) {
+  Person.findByIdAndUpdate(
+    request.params.id, 
+    { name, number },
+    { runValidators: true, new: true }
+  )
+    .then(updatedPerson => {
+      if (!updatedPerson) {
         return response.status(404).send({ error: 'Person not found' })
       }
 
-      contact.name = name
-      contact.number = number
-
-      return contact.save()
-        .then(updatedPerson => {
-          response.json(updatedPerson)
-        })
+      response.json(updatedPerson)
     })
     .catch(error => next(error))
 })
@@ -117,6 +101,10 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'Malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  } else if (error.code === 11000) {
+    return response.status(400).json({ error: 'Name must be unique' })
   }
 
   response.status(500).json({ error: 'Internal server error' })
