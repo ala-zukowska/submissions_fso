@@ -46,15 +46,18 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  const person = contacts.find(contact => contact.id === id)
-
-  if (person) {
-    contacts = contacts.filter(contact => contact.id !== id)
-    response.status(204).end()
-  } else {
-    response.status(404).end()
-  }
+  Person.findByIdAndDelete(request.params.id)
+    .then(deletedPerson => {
+      if (deletedPerson) {
+        response.status(204).end()
+      } else {
+        response.status(404).send({ error: 'Person not found' })
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(400).end()
+    })
 })
 
 app.post('/api/persons', (request, response) => {
