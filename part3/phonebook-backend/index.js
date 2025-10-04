@@ -12,12 +12,6 @@ app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
 app.use(express.static('dist'))
 
-let contacts = []
-
-app.get('/', (request, response) => {
-  response.send('Phonebook backend is running. Try /api/persons or /info');
-});
-
 app.get('/api/persons', (request, response, next) => {
     Person
       .find({}).then(persons => {
@@ -26,25 +20,29 @@ app.get('/api/persons', (request, response, next) => {
       .catch(error => next(error))
 })
 
-app.get('/info', (request, response) => {
-  const currentTime = new Date()
+app.get('/info', (request, response, next) => {
+  Person.countDocuments({})
+    .then( count => {
+      const currentTime = new Date()
 
-  response.send(`
-    <p>Phonebook has info for ${contacts.length} people</p>
-    <p>${currentTime}</p>
-    `)
-
+      response.send(`
+        <p>Phonebook has info for ${count} people</p>
+        <p>${currentTime}</p>
+        `)
+    })
+    .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  const person = contacts.find(contact => contact.id === id)
-
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
-  }
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).send({ error: 'Person not found' })
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -60,13 +58,13 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 app.post('/api/persons', (request, response, next) => {
-  const body = request.body
+  const {name, number} = request.body
 
-  if (!body.number) {
+  if (!number) {
     return response.status(400).json({
       error: 'number missing'
     })
-  } else if (!body.name) {
+  } else if (!name) {
     return response.status(400).json({
       error: 'name missing'
     })
@@ -77,13 +75,33 @@ app.post('/api/persons', (request, response, next) => {
   } */
 
   const person = new Person({
-    name: body.name, 
-    number: body.number
+    name: name, 
+    number: number
   })
 
   person
     .save().then(savedContact => {
       response.json(savedContact)
+    })
+    .catch(error => next(error))
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+  const {name, number} = request.body
+
+  Person.findById(request.params.id)
+    .then(contact => {
+      if (!contact) {
+        return response.status(404).send({ error: 'Person not found' })
+      }
+
+      contact.name = name
+      contact.number = number
+
+      return contact.save()
+        .then(updatedPerson => {
+          response.json(updatedPerson)
+        })
     })
     .catch(error => next(error))
 })
