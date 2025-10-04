@@ -68,20 +68,20 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({
       error: 'name missing'
     })
-  } else if (contacts.find(contact => contact.name === body.name)) {
+  } /* else if (contacts.find(contact => contact.name === body.name)) {
     return response.status(400).json({
       error: 'name must be unique'
     })
-  }
+  } */
 
-  const person = {
-    "id": String(Math.floor(Math.random() * 1000000000)),
-    "name": body.name, 
-    "number": body.number
-  }
+  const person = new Person({
+    name: body.name, 
+    number: body.number
+  })
 
-  contacts = contacts.concat(person)
-  response.json(person)
+  person.save().then(savedContact => {
+    response.json(savedContact)
+  })
 })
 
 const PORT = process.env.PORT
