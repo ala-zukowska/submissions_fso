@@ -19,12 +19,14 @@ const personSchema = new mongoose.Schema({
         type: String,
         required: [true, 'The name is required!'],
         unique: true,
+        trim: true,
         minLength: 3
     },
     number: {
         type: String,
         required: [true, 'The number is required!'],
         minLength: 8,
+        trim: true,
         validate: {
             validator: function(value) {
                 return /^\d{2,3}-\d+$/.test(value);
