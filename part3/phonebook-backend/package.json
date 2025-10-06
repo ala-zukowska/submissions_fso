@@ -7,7 +7,8 @@
     "dev": "node --watch index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "shx rm -rf dist && cd ../../part2/phonebook && npm run build && shx cp -r dist ../../part3/phonebook-backend",
-    "deploy:full": "npm run build:ui && git add . && git commit -m \"Part 3: Phonebook uibuild\" && git push"
+    "deploy:full": "npm run build:ui && git add . && git commit -m \"Part 3: Phonebook uibuild\" && git push",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "",
@@ -19,6 +20,10 @@
     "morgan": "^1.10.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.37.0",
+    "@stylistic/eslint-plugin": "^5.4.0",
+    "eslint": "^9.37.0",
+    "globals": "^16.4.0",
     "shx": "^0.4.0"
   }
 }

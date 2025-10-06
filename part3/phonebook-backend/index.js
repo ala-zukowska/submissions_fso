@@ -13,11 +13,11 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :d
 app.use(express.static('dist'))
 
 app.get('/api/persons', (request, response, next) => {
-    Person
-      .find({}).then(persons => {
-        response.json(persons)
-      })
-      .catch(error => next(error))
+  Person
+    .find({}).then(persons => {
+      response.json(persons)
+    })
+    .catch(error => next(error))
 })
 
 app.get('/info', (request, response, next) => {
@@ -58,10 +58,10 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 app.post('/api/persons', (request, response, next) => {
-  const {name, number} = request.body
+  const { name, number } = request.body
 
   const person = new Person({
-    name: name, 
+    name: name,
     number: number
   })
 
@@ -73,10 +73,10 @@ app.post('/api/persons', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const {name, number} = request.body
+  const { name, number } = request.body
 
   Person.findByIdAndUpdate(
-    request.params.id, 
+    request.params.id,
     { name, number },
     { runValidators: true, new: true }
   )
@@ -96,7 +96,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint)
 
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, request, response) => {
   console.error(error.message)
 
   if (error.name === 'CastError') {
@@ -114,5 +114,5 @@ app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${PORT}`)
 })
