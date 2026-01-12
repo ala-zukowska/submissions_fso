@@ -1,0 +1,50 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "KittyClysm",
+    "author": "Elise Xavier",
+    "url": "https://kittyclysm.com/",
+    "likes": 1
+}
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "The World Travel Guy",
+    "author": "David Leiter",
+    "url": "https://theworldtravelguy.com/",
+    "likes": 1
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "gardening with turtles",
+    "author": "Maria",
+    "url": "https://gardeningwithturtles.blogspot.com/"
+}
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{}
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "The World Travel Guy",
+    "author": "David Leiter",
+    "url": "https:///",
+    "likes": 1
+}
+
+###
