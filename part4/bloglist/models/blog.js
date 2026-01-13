@@ -1,15 +1,5 @@
 const mongoose = require('mongoose')
 
-const mongoUrl = process.env.MONGODB_URI
-
-mongoose.connect(mongoUrl, { family: 4 })
-    .then( () => {
-        console.log('Connected to MongoDB')
-    })
-    .catch( (error) => {
-        console.log(`Error connecting to MongoDB: ${error.message}`)
-    })
-
 mongoose.set('setDefaultsOnInsert', false);
 
 const blogSchema = new mongoose.Schema({
